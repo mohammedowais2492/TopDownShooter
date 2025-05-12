@@ -77,3 +77,9 @@ class Player:
             bullet.move()
             if bullet.y + bullet.height < 0:
                 self.bullets.remove(bullet)
+
+    """
+    Method to get the enclosing rectangle of the player
+    """
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)

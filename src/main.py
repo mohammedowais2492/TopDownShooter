@@ -22,8 +22,10 @@ def initialize():
     #Constants
     FPS = 60
 
+    player_health = 5
     score = 0
     font = pygame.font.SysFont("comicsans", 36)
+    game_over_font = pygame.font.SysFont("comicsans", 72)
 
     # Set up the game window
     info = pygame.display.Info()
@@ -63,6 +65,14 @@ def initialize():
                     enemies.append(spawn_enemy(WIDTH))
                     score += 1
                     break
+            if enemy.get_rect().colliderect(player.get_rect()):
+                enemies.remove(enemy)
+                enemies.append(spawn_enemy(WIDTH))
+                player_health -= 1
+            elif enemy.y > HEIGHT:
+                enemies.remove(enemy)
+                enemies.append(spawn_enemy(WIDTH))
+                player_health -= 1
 
         # Draw everything
         screen.fill((30, 30, 30))
@@ -72,8 +82,37 @@ def initialize():
             enemy.draw(screen)
         score_text = font.render("Score: " + str(score), True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
+        health_text = font.render("Health: " + str(player_health), True, (255, 255, 255))
+        screen.blit(health_text, (10, 40))
+        game_over = False
+        if player_health <= 0:
+            game_over = True
         pygame.display.flip()
         clock.tick(FPS)
+        while game_over:
+            screen.fill((0, 0, 0))
+            game_over_text = game_over_font.render("GAME OVER", True, (255, 0, 0))
+            final_score_text = game_over_font.render("Final Score: " + str(score), True, (200, 200, 200))
+            screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - 60))
+            screen.blit(final_score_text, (WIDTH // 2 - final_score_text.get_width() // 2, HEIGHT // 2))
+
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    game_over = False
+                    player_health = 5
+                    score = 0
+                    player.bullets.clear()
+
+                    enemies = [spawn_enemy(WIDTH) for _ in range(3)]
+
+                    player.x = WIDTH // 2 - player.width // 2
+                    player.y = HEIGHT // 2 - player.height // 2
+
 
 initialize()
 
