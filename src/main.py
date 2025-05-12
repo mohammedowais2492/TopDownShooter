@@ -12,7 +12,7 @@ def spawn_enemy(width):
         width = 50,
         height = 50,
         color = (0, 255, 0),
-        speed =3
+        speed = 2
     )
 
 def initialize():
@@ -36,8 +36,7 @@ def initialize():
     player = Player(x = WIDTH // 2, y = HEIGHT // 2, width = 50, height = 50, color = (255, 0, 0))
 
     # Create an enemy instance
-    enemy = BasicEnemy(x = WIDTH // 2, y = 0, width = 50, height = 50, color = (0, 255, 0), speed = 2)
-    enemy_respawn_time = None
+    enemies = [spawn_enemy(WIDTH) for _ in range(3)]
 
     # Main game loop
     while True:
@@ -56,24 +55,19 @@ def initialize():
 
         player.update_bullets()
 
-        if enemy:
+        for enemy in enemies:
             for bullet in player.bullets:
                 if bullet.get_rect().colliderect(enemy.get_rect()):
                     player.bullets.remove(bullet)
-                    enemy = None
-                    enemy_respawn_time = pygame.time.get_ticks() + 1000
+                    enemies.remove(enemy)
+                    enemies.append(spawn_enemy(WIDTH))
                     score += 1
                     break
-
-        if not enemy and enemy_respawn_time:
-            if pygame.time.get_ticks() >= enemy_respawn_time:
-                enemy = spawn_enemy(WIDTH)
-                enemy_respawn_time = None
 
         # Draw everything
         screen.fill((30, 30, 30))
         player.draw(screen)
-        if enemy:
+        for enemy in enemies:
             enemy.move()
             enemy.draw(screen)
         score_text = font.render("Score: " + str(score), True, (255, 255, 255))
