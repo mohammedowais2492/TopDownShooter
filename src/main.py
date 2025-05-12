@@ -1,6 +1,7 @@
 import pygame
 import sys
 from Player.player import Player
+from Enemy.basic_enemy import BasicEnemy
 
 def initialize():
     #Initialize pygame
@@ -19,6 +20,9 @@ def initialize():
     # Create player instance
     player = Player(x = WIDTH // 2, y = HEIGHT // 2, width = 50, height = 50, color = (255, 0, 0))
 
+    # Create an enemy instance
+    enemy = BasicEnemy(x = WIDTH // 2, y = 0, width = 50, height = 50, color = (0, 255, 0), speed = 2)
+
     # Main game loop
     while True:
         # Handle quit events
@@ -36,9 +40,19 @@ def initialize():
 
         player.update_bullets()
 
+        if enemy:
+            for bullet in player.bullets:
+                if bullet.get_rect().colliderect(enemy.get_rect()):
+                    player.bullets.remove(bullet)
+                    enemy = None
+                    break
+
         # Draw everything
         screen.fill((30, 30, 30))
         player.draw(screen)
+        if enemy:
+            enemy.move()
+            enemy.draw(screen)
 
         pygame.display.flip()
         clock.tick(FPS)
