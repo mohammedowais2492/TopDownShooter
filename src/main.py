@@ -22,6 +22,9 @@ def initialize():
     #Constants
     FPS = 60
 
+    score = 0
+    font = pygame.font.SysFont("comicsans", 36)
+
     # Set up the game window
     info = pygame.display.Info()
     WIDTH, HEIGHT = info.current_w - 50, info.current_h - 50
@@ -59,6 +62,7 @@ def initialize():
                     player.bullets.remove(bullet)
                     enemy = None
                     enemy_respawn_time = pygame.time.get_ticks() + 1000
+                    score += 1
                     break
 
         if not enemy and enemy_respawn_time:
@@ -72,7 +76,8 @@ def initialize():
         if enemy:
             enemy.move()
             enemy.draw(screen)
-
+        score_text = font.render("Score: " + str(score), True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
         pygame.display.flip()
         clock.tick(FPS)
 
