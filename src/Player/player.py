@@ -1,8 +1,10 @@
 import pygame
+from pygame import time
+from Bullet.bullet import Bullet
 
 """
 This class represents the player in this game. Each player has its own position on the 2d plane, a tuple representing 
-the color, width, height and movement speed.
+the color, width, height, movement speed, time the last bullet was shot and cooldown before the next bullet can be shot.
 """
 class Player:
     """
@@ -15,6 +17,10 @@ class Player:
         self.width = width
         self.color = color
         self.speed = 5 # initial speed is 5 for all players
+        self.bullets = []
+        self.bullet_speed = 10
+        self.last_shot_time = 0
+        self.cooldown = 300
 
     """
     Method for player movement.
@@ -42,4 +48,32 @@ class Player:
     """
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, [self.x, self.y, self.width, self.height])
+        for bullet in self.bullets:
+            bullet.draw(screen)
 
+
+    """
+    Method for shooting.
+    """
+    def shoot(self):
+        current_time = time.get_ticks()
+        if current_time - self.last_shot_time >= self.cooldown:
+            bullet = Bullet(
+                x = self.x + self.width // 2 - 5,
+                y = self.y,
+                width = 10,
+                height = 20,
+                color = (255, 255, 0),
+                speed = self.bullet_speed
+            )
+            self.bullets.append(bullet)
+            self.last_shot_time = current_time
+
+    """
+    Method to update and remove bullets.
+    """
+    def update_bullets(self):
+        for bullet in self.bullets:
+            bullet.move()
+            if bullet.y + bullet.height < 0:
+                self.bullets.remove(bullet)
