@@ -2,6 +2,18 @@ import pygame
 import sys
 from Player.player import Player
 from Enemy.basic_enemy import BasicEnemy
+import random
+
+def spawn_enemy(width):
+    x = random.randint(0, width - 50)
+    return BasicEnemy(
+        x = x,
+        y = 0,
+        width = 50,
+        height = 50,
+        color = (0, 255, 0),
+        speed =3
+    )
 
 def initialize():
     #Initialize pygame
@@ -22,6 +34,7 @@ def initialize():
 
     # Create an enemy instance
     enemy = BasicEnemy(x = WIDTH // 2, y = 0, width = 50, height = 50, color = (0, 255, 0), speed = 2)
+    enemy_respawn_time = None
 
     # Main game loop
     while True:
@@ -45,7 +58,13 @@ def initialize():
                 if bullet.get_rect().colliderect(enemy.get_rect()):
                     player.bullets.remove(bullet)
                     enemy = None
+                    enemy_respawn_time = pygame.time.get_ticks() + 1000
                     break
+
+        if not enemy and enemy_respawn_time:
+            if pygame.time.get_ticks() >= enemy_respawn_time:
+                enemy = spawn_enemy(WIDTH)
+                enemy_respawn_time = None
 
         # Draw everything
         screen.fill((30, 30, 30))
