@@ -94,7 +94,7 @@ def initialize():
         pygame.display.flip()
         clock.tick(FPS)
         while game_over:
-            screen.fill((0, 0, 0))
+            screen.blit(background_img, (0, 0))
             game_over_text = game_over_font.render("GAME OVER", True, (255, 0, 0))
             final_score_text = game_over_font.render("Final Score: " + str(score), True, (200, 200, 200))
             screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - 60))
