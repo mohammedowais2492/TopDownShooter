@@ -31,14 +31,18 @@ def initialize():
     info = pygame.display.Info()
     WIDTH, HEIGHT = info.current_w - 50, info.current_h - 50
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-    pygame.display.set_caption('Mexican Standoff')
+    pygame.display.set_caption('Alien Invaders')
     clock = pygame.time.Clock()
+    background_img = pygame.image.load("../resources/Background.png").convert()
+    background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
 
     # Create player instance
     player = Player(x = WIDTH // 2, y = HEIGHT // 2, width = 50, height = 50, color = (255, 0, 0))
 
     # Create an enemy instance
     enemies = [spawn_enemy(WIDTH) for _ in range(3)]
+
+    show_main_menu(screen, WIDTH, HEIGHT, background_img)
 
     # Main game loop
     while True:
@@ -75,7 +79,7 @@ def initialize():
                 player_health -= 1
 
         # Draw everything
-        screen.fill((30, 30, 30))
+        screen.blit(background_img, (0, 0))
         player.draw(screen)
         for enemy in enemies:
             enemy.move()
@@ -112,6 +116,41 @@ def initialize():
 
                     player.x = WIDTH // 2 - player.width // 2
                     player.y = HEIGHT // 2 - player.height // 2
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    game_over = False
+                    player_health = 5
+                    score = 0
+                    player.bullets.clear()
+
+                    enemies = [spawn_enemy(WIDTH) for _ in range(3)]
+
+                    player.x = WIDTH // 2 - player.width // 2
+                    player.y = HEIGHT // 2 - player.height // 2
+                    show_main_menu(screen, WIDTH, HEIGHT, background_img)
+
+"""
+Function to show the main menu.
+"""
+def show_main_menu(screen, width, height, background_img):
+    waiting = True
+    while waiting:
+        screen.fill((0, 0, 0))
+        title_font =  pygame.font.SysFont("comicsans", 72)
+        title_text = title_font.render("Alien Invaders", True, (255, 255, 255))
+        start_text = title_font.render("Press any key to start", True, (255, 255, 255))
+
+        screen.blit(background_img, (0, 0))
+
+        screen.blit(title_text, (width // 2 - title_text.get_width() // 2, height // 2 - 60))
+        screen.blit(start_text, (width // 2 - start_text.get_width() // 2, height // 2))
+
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.KEYDOWN:
+                waiting = False
 
 
 initialize()
