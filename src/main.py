@@ -2,7 +2,7 @@ import pygame
 import sys
 from Player.player import Player
 from Enemy.basic_enemy import BasicEnemy
-from Stars.stars import Stars
+from Background.background import Background
 import random
 
 def spawn_enemy(width):
@@ -43,6 +43,9 @@ def initialize():
     # Create an enemy instance
     enemies = [spawn_enemy(WIDTH) for _ in range(3)]
 
+    # Create the background instance
+    background = Background(WIDTH, HEIGHT, 150)
+
     show_main_menu(screen, WIDTH, HEIGHT, background_img)
 
     # Main game loop
@@ -81,13 +84,7 @@ def initialize():
 
         # Draw everything
         screen.fill((0, 0, 0))
-        stars = Stars(WIDTH, HEIGHT)
-        for star in stars.stars:
-            star['y'] += star['speed']
-            if star['y'] > HEIGHT:
-                star['y'] = 0
-                star['x'] = random.randint(0, WIDTH)
-            pygame.draw.rect(screen, star['color'], pygame.Rect(star['x'], star['y'], star['size'], star['size']))
+        background.draw(screen, WIDTH, HEIGHT)
         player.draw(screen)
         for enemy in enemies:
             enemy.move()
