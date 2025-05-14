@@ -2,6 +2,7 @@ import pygame
 import sys
 from Player.player import Player
 from Enemy.basic_enemy import BasicEnemy
+from Stars.stars import Stars
 import random
 
 def spawn_enemy(width):
@@ -79,7 +80,14 @@ def initialize():
                 player_health -= 1
 
         # Draw everything
-        screen.blit(background_img, (0, 0))
+        screen.fill((0, 0, 0))
+        stars = Stars(WIDTH, HEIGHT)
+        for star in stars.stars:
+            star['y'] += star['speed']
+            if star['y'] > HEIGHT:
+                star['y'] = 0
+                star['x'] = random.randint(0, WIDTH)
+            pygame.draw.rect(screen, star['color'], pygame.Rect(star['x'], star['y'], star['size'], star['size']))
         player.draw(screen)
         for enemy in enemies:
             enemy.move()
