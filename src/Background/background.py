@@ -1,11 +1,14 @@
 import math
 import pygame
 import random
+
+from Stars.shooting_star import ShootingStar
 from Stars.star import Star
 
 class Background:
     def __init__(self, width, height, number_of_stars):
         self.stars = []
+        self.shooting_stars = []
         colors = [(255, 255, 255), (180, 180, 255), (200, 200, 200)]
 
         for _ in range(number_of_stars):
@@ -25,3 +28,12 @@ class Background:
 
         for star in self.stars:
             star.draw(screen, width, height, time_offset)
+
+        if random.random() < 0.02:
+            self.shooting_stars.append(ShootingStar(width, height))
+
+        for star in self.shooting_stars:
+            star.update()
+            star.draw(screen)
+            if star.is_expired():
+                self.shooting_stars.remove(star)
