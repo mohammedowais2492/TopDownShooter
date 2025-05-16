@@ -3,6 +3,7 @@ import sys
 from Player.player import Player
 from Enemy.basic_enemy import BasicEnemy
 from Background.background import Background
+from Menu.main_menu import MainMenu
 import random
 
 def spawn_enemy(width):
@@ -15,6 +16,33 @@ def spawn_enemy(width):
         color = (0, 255, 0),
         speed = 2
     )
+
+def menu_screen(screen, background_img, width, height):
+    font = pygame.font.SysFont("comicsans", 36)
+    menu = MainMenu(screen, ["New Game", "View High Scores", "Quit"], font)
+    in_menu = True
+    while in_menu:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        screen.blit(background_img, (0, 0))
+        title_font = pygame.font.SysFont("comicsans", 72)
+        title_text = title_font.render("Alien Invaders", True, (255, 255, 255))
+        screen.blit(title_text, (width // 2 - title_text.get_width() // 2, height // 3 - 60))
+        selected = menu.update(events)
+        menu.draw()
+
+        if selected is not None:
+            if selected == 0:
+                in_menu = False
+            elif selected == 1:
+                print("TODO Show high scores")
+            elif selected == 2:
+                pygame.quit()
+                sys.exit()
+        pygame.display.flip()
 
 def initialize():
     #Initialize pygame
@@ -30,12 +58,14 @@ def initialize():
 
     # Set up the game window
     info = pygame.display.Info()
-    WIDTH, HEIGHT = info.current_w - 50, info.current_h - 50
-    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+    WIDTH, HEIGHT = info.current_w, info.current_h
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.NOFRAME)
     pygame.display.set_caption('Alien Invaders')
     clock = pygame.time.Clock()
     background_img = pygame.image.load("../resources/Background.png").convert()
     background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
+
+
 
     # Create player instance
     player = Player(x = WIDTH // 2, y = HEIGHT // 2, width = 50, height = 50, color = (255, 0, 0))
@@ -46,7 +76,7 @@ def initialize():
     # Create the background instance
     background = Background(WIDTH, HEIGHT, 150)
 
-    show_main_menu(screen, WIDTH, HEIGHT, background_img)
+    menu_screen(screen, background_img, WIDTH, HEIGHT)
 
     # Main game loop
     while True:
@@ -131,31 +161,7 @@ def initialize():
 
                     player.x = WIDTH // 2 - player.width // 2
                     player.y = HEIGHT // 2 - player.height // 2
-                    show_main_menu(screen, WIDTH, HEIGHT, background_img)
-
-"""
-Function to show the main menu.
-"""
-def show_main_menu(screen, width, height, background_img):
-    waiting = True
-    while waiting:
-        screen.fill((0, 0, 0))
-        title_font =  pygame.font.SysFont("comicsans", 72)
-        title_text = title_font.render("Alien Invaders", True, (255, 255, 255))
-        start_text = title_font.render("Press any key to start", True, (255, 255, 255))
-
-        screen.blit(background_img, (0, 0))
-
-        screen.blit(title_text, (width // 2 - title_text.get_width() // 2, height // 2 - 60))
-        screen.blit(start_text, (width // 2 - start_text.get_width() // 2, height // 2))
-
-        pygame.display.flip()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYDOWN:
-                waiting = False
+                    menu_screen(screen, background_img, WIDTH, HEIGHT)
 
 
 initialize()
