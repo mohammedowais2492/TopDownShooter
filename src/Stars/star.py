@@ -28,4 +28,4 @@ class Star:
         brightness = int(100 + 155 * abs(math.sin(time_offset + self.phase)))
         color = (brightness, brightness, brightness)
 
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, self.size, self.size))
+        pygame.draw.rect(screen, color, pygame.Rect(self.x, self.y, self.size, self.size))
